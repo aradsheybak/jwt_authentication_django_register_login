@@ -25,3 +25,16 @@ class Register(APIView):
         return Response({'message': 'Failed', 'error': serializer_s.errors, 'status': status.HTTP_400_BAD_REQUEST})
 
 
+class Login(APIView):
+    def post(self, request):
+        mobile = request.data['mobile']
+        password = request.data['password']
+
+        user = User.objects.filter(mobile=mobile).first()
+
+        if user is None:
+            return Response(
+                {'status': status.HTTP_400_BAD_REQUEST, 'message': 'Invalid Credential!'})
+        if not user.check_password(password):
+            return Response(
+                {'status': status.HTTP_400_BAD_REQUEST, 'message': 'Invalid Credential!'})
